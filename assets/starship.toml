@@ -1,0 +1,45 @@
+add_newline = true
+
+format = """
+$directory$git_branch$git_status $nodejs$rust$java$cmd_duration
+$character
+"""
+
+palette = "midnight_cat"
+
+[palettes.midnight_cat]
+bg = "#25252d"
+fg = "#e6e9ef"
+blue = "#89b4fa"
+purple = "#c4b5fd"
+green = "#8bd5a0"
+orange = "#f5a97f"
+red = "#f38ba8"
+cyan = "#94e2d5"
+gray = "#7b8092"
+
+[directory]
+style = "blue bold"
+
+[git_branch]
+symbol = " "
+style = "purple"
+
+[git_status]
+style = "red"
+
+[nodejs]
+style = "green"
+
+[rust]
+style = "orange"
+
+[java]
+style = "orange"
+
+[cmd_duration]
+style = "gray"
+
+[character]
+success_symbol = "[❯](blue)"
+error_symbol = "[❯](red)"

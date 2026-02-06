@@ -40,6 +40,15 @@
   services.displayManager.cosmic-greeter.enable = true;
   services.desktopManager.cosmic.enable = true;
 
+  environment.cosmic.excludePackages = with pkgs; [
+    cosmic-edit
+  ];
+
+  services.udev.extraHwdb = ''
+    evdev:input:*
+      KEYBOARD_KEY_3a=leftctrl
+  '';
+
   # 日本語入力（fcitx5 + mozc）
   i18n.inputMethod = {
     enable = true;
@@ -62,6 +71,7 @@
       noto-fonts-cjk-serif
       noto-fonts-color-emoji
       jetbrains-mono
+      hackgen-nf-font
     ];
   };
 
@@ -76,19 +86,58 @@
 
   users.users.takashi = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "adbusers"
+      "libvirtd"
+      "kvm"
+    ];
     shell = pkgs.zsh;
   };
 
-  # 便利ツールはOS側に置く派（最低限）
-  environment.systemPackages = with pkgs; [
+  programs.dconf.enable = true;
+  services.dbus.enable = true;
+
+  # Wayland / COSMIC 重要
+  xdg.portal.enable = true;
+  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+
+  environment.systemPackages = with pkgs; [  
     wget
     git
     direnv
     nix-direnv
-    vscode
+    
+    #ターミナル
+    wezterm
+        
+    #ファイルマネージャ
+    nemo-with-extensions
+    #アイコンテーマ
+    papirus-icon-theme
+    fluent-icon-theme
+    
+
+    # setting tools
+    glib
+    gsettings-desktop-schemas
+    
+    #ブラウザ
     vivaldi
+
+    #開発環境    
+    android-studio
+    android-tools
+    vscode
   ];
+
+  nixpkgs.config = {
+    android_sdk.accept_license = true;
+  };
+
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
 
   # NixOSの互換性バージョン（インストール時に合わせる）
   system.stateVersion = "24.11";

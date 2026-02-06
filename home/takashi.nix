@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   home.username = "takashi";
@@ -42,6 +42,9 @@
       # direnv
       eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
 
+      # midnight-cat dircolors
+      eval "$(dircolors -b ~/.config/midnight-cat/dircolors)"
+
       # fzf (home.packagesに入れてる前提、無ければ消してOK)
       if command -v fzf >/dev/null 2>&1; then
         source <(fzf --zsh)
@@ -49,73 +52,52 @@
 
       # nice-to-have
       setopt AUTO_PUSHD PUSHD_SILENT
+
+      # Midnight Cat zsh syntax highlighting
+      typeset -A ZSH_HIGHLIGHT_STYLES
+
+      # コマンド（強すぎるなら少し落ち着かせる）
+      ZSH_HIGHLIGHT_STYLES[command]='fg=#8bd5a0'
+      ZSH_HIGHLIGHT_STYLES[builtin]='fg=#8bd5a0'
+
+      # auto-cdで打つディレクトリ名（= path系）をグレー寄りに
+      ZSH_HIGHLIGHT_STYLES[path]='fg=#cdd3df'
+      ZSH_HIGHLIGHT_STYLES[path_prefix]='fg=#cdd3df'
+      ZSH_HIGHLIGHT_STYLES[path_approx]='fg=#cdd3df'
+      ZSH_HIGHLIGHT_STYLES[precommand]='fg=#cdd3df'
+
+      # 補助
+      ZSH_HIGHLIGHT_STYLES[function]='fg=#89b4fa'
+      ZSH_HIGHLIGHT_STYLES[alias]='fg=#89b4fa'
+      ZSH_HIGHLIGHT_STYLES[globbing]='fg=#74c7ec'
+      ZSH_HIGHLIGHT_STYLES[comment]='fg=#7b8092'
+
+      # 未存在コマンドの赤をパステルに
+      ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#f38ba8'
     '';
   };
 
   programs.starship = {
     enable = true;
-    settings = {
-      add_newline = true;
-
-      format = ''
-        $directory$git_branch$git_status$nodejs$rust
-        $character
-      '';
-
-      # --- Directory ---
-      directory = {
-        truncation_length = 4;
-        truncate_to_repo = true;
-        style = "bold cyan";
-      };
-
-      # --- Git (詳細) ---
-      git_branch = {
-        symbol = " ";
-        style = "bold purple";
-        format = " [$symbol$branch]($style)";
-      };
-
-      git_status = {
-        style = "yellow";
-        format = " [$modified]($style)";
-	modified = "*";
-      };
-
-      cmd_duration = {
-        min_time = 500;
-        format = " [$duration]($style)";
-      };
-
-      character = {
-        success_symbol = "[❯](bold green)";
-        error_symbol = "[❯](bold red)";
-      };
-    };
+    enableZshIntegration = true;
   };
 
-  # あると体験が上がるツール（必要なら）
-  home.packages = with pkgs; [
-    zoxide
-    eza
-    fzf
-    bat
-  ];
-
-  programs.zoxide.enable = true;
-
-  # eza/batを使う小ワザ（好み）
-  programs.zsh.shellAliases = {
-    ls = "eza";
-    cat = "bat";
-    cd = "z";
-  };
+  home.file.".config/starship.toml".source = ../assets/starship.toml;
+  home.file.".config/midnight-cat/dircolors".source = ../assets/dircolors;
+  home.file.".gitconfig".source = ../assets/gitconfig;
 
   programs.git = {
     enable = true;
     settings.user = {
       name = "takashi";
-      email = "takw45@gmail.com";
+      email = "3017297+takw45@users.noreply.github.com";
+    };
+
+    settings = {
+      core.editor = "code --wait";
+      init.defaultBranch = "main";
+      pull.rebase = false;
+      push.autoSetupRemote = true;
     };
   };
 
@@ -124,12 +106,38 @@
     nix-direnv.enable = true;
   };
 
-  # CapsLock -> Ctrl（※入れ替えなら ctrl:swapcaps）
-  home.keyboard = {
-    layout = "us";
-    options = [ "ctrl:nocaps" ];
-    # options = [ "ctrl:swapcaps" ];
+
+  # 壁紙設定
+  home.file."Pictures/wallpaper.jpg".source = ../assets/wallpaper.jpg;
+
+  home.sessionVariables = {
+    ELECTRON_OZONE_PLATFORM_HINT = "wayland";
   };
+
+  xdg.mimeApps = {
+    enable = true;
+
+    defaultApplications = {
+      "x-scheme-handler/terminal" = "Alacritty.desktop";
+      "application/x-terminal-emulator" = "Alacritty.desktop";
+    };
+  };
+
+  dconf.enable = true;
+  dconf.settings = {
+    "org/gnome/desktop/interface" = {
+      icon-theme = "Papirus-Dark";
+    };
+  };
+
+  xdg.userDirs = {
+    enable = true;
+    documents = "Documents";
+    music = "Music";
+    pictures = "Pictures";
+    videos = "Videos";
+  };
+
 
   # home-manager の世代管理用
   home.stateVersion = "24.11";

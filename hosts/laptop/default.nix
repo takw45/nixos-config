@@ -8,9 +8,6 @@
   hardware.bluetooth.enable = true;
   services.blueman.enable = true;
 
-  # WiFi
-  networking.wireless.enable = true;
-
   # 電源管理
   services.power-profiles-daemon.enable = true;
 

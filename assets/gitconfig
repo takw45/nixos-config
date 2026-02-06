@@ -1,0 +1,31 @@
+[color]
+  ui = true
+
+[color "branch"]
+  current = bold magenta
+  local = magenta
+  remote = cyan
+
+[color "status"]
+  added = green
+  changed = blue
+  untracked = magenta
+  deleted = red
+
+[color "diff"]
+  meta = cyan
+  frag = magenta
+  old = red
+  new = green
+
+[color "interactive"]
+  prompt = magenta
+
+[color "grep"]
+  match = bold blue
+
+[color "decorate"]
+  branch = magenta
+  remoteBranch = cyan
+  tag = yellow
+  stash = magenta

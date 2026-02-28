@@ -1,8 +1,24 @@
 { config, pkgs, lib, ... }:
 
+let
+  obsidianWrapped = pkgs.symlinkJoin {
+    name = "obsidian-wayland-wrapped";
+    paths = [ pkgs.obsidian ];
+    buildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/obsidian \
+        --add-flags "--enable-features=UseOzonePlatform,WaylandWindowDecorations" \
+        --add-flags "--ozone-platform=wayland"
+    '';
+  };
+in
 {
   home.username = "takashi";
   home.homeDirectory = "/home/takashi";
+
+  home.packages = [
+    obsidianWrapped
+  ];
 
   programs.zsh = {
     enable = true;
@@ -31,7 +47,8 @@
       gc = "git commit";
       gco = "git checkout";
       gl = "git log --oneline --decorate --graph -n 30";
-      nr = "sudo nixos-rebuild switch --flake /etc/nixos#vm";
+      nr-laptop = "sudo nixos-rebuild switch --flake /etc/nixos#laptop";
+      nr-vm = "sudo nixos-rebuild switch --flake /etc/nixos#vm";
     };
 
     # zshrc末尾にそのまま入れる（最小・安全）
@@ -118,8 +135,8 @@
     enable = true;
 
     defaultApplications = {
-      "x-scheme-handler/terminal" = "Alacritty.desktop";
-      "application/x-terminal-emulator" = "Alacritty.desktop";
+      "x-scheme-handler/terminal" = "org.wezfurlong.wezterm.desktop";
+      "application/x-terminal-emulator" = "org.wezfurlong.wezterm.desktop";
     };
   };
 

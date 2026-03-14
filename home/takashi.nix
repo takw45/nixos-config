@@ -20,23 +20,33 @@ in
     obsidianWrapped
   ];
 
+  # 環境変数
+  home.sessionVariables = {
+    LSCOLORS = "exfxcxdxbxegedabagacad";
+    EDITOR = "code";
+    FZF_DEFAULT_OPTS = "--reverse --no-sort --no-hscroll --preview-window=down";
+  };
+
   programs.zsh = {
     enable = true;
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
+    # 使い勝手系
+    # defaultKeymap = "emacs"; # vim派なら "viins" など
+    autocd = true;
+
     history = {
       size = 10000;
       save = 10000;
       share = true;
       ignoreDups = true;
+      ignoreAllDups = true;
       ignoreSpace = true;
-    };
+      expireDuplicatesFirst = false;
+   };
 
-    # 使い勝手系
-    # defaultKeymap = "emacs"; # vim派なら "viins" など
-    autocd = true;
 
     # aliasは必要最小限
     shellAliases = {
@@ -51,46 +61,77 @@ in
       nr-vm = "sudo nixos-rebuild switch --flake /etc/nixos#vm";
     };
 
+    setOptions = [
+      "AUTO_CD"
+      "SHARE_HISTORY"
+      "HIST_IGNORE_DUPS"
+      "HIST_IGNORE_ALL_DUPS"
+      "HIST_IGNORE_SPACE"
+      "HIST_REDUCE_BLANKS"
+      "PRINT_EIGHT_BIT"
+      "NO_FLOW_CONTROL"
+    ];
+
     # zshrc末尾にそのまま入れる（最小・安全）
-    initContent = ''
-      # Starship
-      eval "$(${pkgs.starship}/bin/starship init zsh)"
+    initExtra = ''
+      # bindkey
+      bindkey -e
+      bindkey '^[[1;5D' backward-word
+      bindkey '^[[1;5C' forward-word
 
-      # direnv
-      eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+      # Sheldon
+      eval "$(${pkgs.sheldon}/bin/sheldon source)"
 
-      # midnight-cat dircolors
-      eval "$(dircolors -b ~/.config/midnight-cat/dircolors)"
+      # fzf history
+      function fzf-select-history() {
+        BUFFER=$(history -n -r 1 | fzf --query "$LBUFFER")
+        CURSOR=$#BUFFER
+        zle reset-prompt
+      }
+      zle -N fzf-select-history
+      bindkey '^r' fzf-select-history
 
-      # fzf (home.packagesに入れてる前提、無ければ消してOK)
-      if command -v fzf >/dev/null 2>&1; then
-        source <(fzf --zsh)
+      # cdr
+      if [[ -n $(echo ''${^fpath}/chpwd_recent_dirs(N)) && -n $(echo ''${^fpath}/cdr(N)) ]]; then
+          autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
+          add-zsh-hook chpwd chpwd_recent_dirs
+          zstyle ':completion:*' recent-dirs-insert both
+          zstyle ':chpwd:*' recent-dirs-default true
+          zstyle ':chpwd:*' recent-dirs-max 1000
       fi
 
-      # nice-to-have
-      setopt AUTO_PUSHD PUSHD_SILENT
+      # fzf cdr
+      function fzf-cdr() {
+          local selected_dir=$(cdr -l | awk '{ print $2 }' | fzf)
+          if [ -n "$selected_dir" ]; then
+              BUFFER="cd ''${selected_dir}"
+              zle accept-line
+          fi
+          zle clear-screen
+      }
+      zle -N fzf-cdr
+      bindkey '^q' fzf-cdr
 
-      # Midnight Cat zsh syntax highlighting
-      typeset -A ZSH_HIGHLIGHT_STYLES
+      # git branch selector
+      user_name=$(git config user.name)
+      fmt="\
+      %(if:equals=$user_name)%(authorname)%(then)%(color:default)%(else)%(color:brightred)%(end)%(refname:short)|\
+      %(committerdate:relative)|\
+      %(subject)"
 
-      # コマンド（強すぎるなら少し落ち着かせる）
-      ZSH_HIGHLIGHT_STYLES[command]='fg=#8bd5a0'
-      ZSH_HIGHLIGHT_STYLES[builtin]='fg=#8bd5a0'
-
-      # auto-cdで打つディレクトリ名（= path系）をグレー寄りに
-      ZSH_HIGHLIGHT_STYLES[path]='fg=#cdd3df'
-      ZSH_HIGHLIGHT_STYLES[path_prefix]='fg=#cdd3df'
-      ZSH_HIGHLIGHT_STYLES[path_approx]='fg=#cdd3df'
-      ZSH_HIGHLIGHT_STYLES[precommand]='fg=#cdd3df'
-
-      # 補助
-      ZSH_HIGHLIGHT_STYLES[function]='fg=#89b4fa'
-      ZSH_HIGHLIGHT_STYLES[alias]='fg=#89b4fa'
-      ZSH_HIGHLIGHT_STYLES[globbing]='fg=#74c7ec'
-      ZSH_HIGHLIGHT_STYLES[comment]='fg=#7b8092'
-
-      # 未存在コマンドの赤をパステルに
-      ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#f38ba8'
+      function select-git-branch-friendly() {
+        selected_branch=$(
+          git branch --sort=-committerdate --format=$fmt --color=always \
+          | column -ts'|' \
+          | fzf --ansi --exact --preview='git log --oneline --graph --decorate --color=always -50 {+1}' \
+          | awk '{print $1}'
+        )
+        BUFFER="''${LBUFFER}''${selected_branch}''${RBUFFER}"
+        CURSOR=$((''${#LBUFFER} + ''${#selected_branch}))
+        zle redisplay
+      }
+      zle -N select-git-branch-friendly
+      bindkey '^b' select-git-branch-friendly
     '';
   };
 
@@ -102,6 +143,7 @@ in
   home.file.".config/starship.toml".source = ../assets/starship.toml;
   home.file.".config/midnight-cat/dircolors".source = ../assets/dircolors;
   home.file.".gitconfig".source = ../assets/gitconfig;
+  home.file.".config/wezterm/wezterm.lua".source = ../assets/wezterm.lua;
 
   programs.git = {
     enable = true;
@@ -120,6 +162,7 @@ in
 
   programs.direnv = {
     enable = true;
+    enableZshIntegration = true;
     nix-direnv.enable = true;
   };
 

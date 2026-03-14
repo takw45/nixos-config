@@ -73,7 +73,7 @@ in
     ];
 
     # zshrc末尾にそのまま入れる（最小・安全）
-    initExtra = ''
+    initContent = ''
       # bindkey
       bindkey -e
       bindkey '^[[1;5D' backward-word
@@ -143,11 +143,7 @@ in
   home.file.".config/starship.toml".source = ../assets/starship.toml;
   home.file.".config/midnight-cat/dircolors".source = ../assets/dircolors;
   home.file.".gitconfig".source = ../assets/gitconfig;
-<<<<<<< HEAD
   home.file.".config/wezterm/wezterm.lua".source = ../assets/wezterm.lua;
-=======
-  home.file.".config/wezterm/wezterm.lua".source = ../assets/wezterm.lua
->>>>>>> 378bcf9 (change system.stateVersion to 25.11)
 
   programs.git = {
     enable = true;

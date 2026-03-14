@@ -4,13 +4,16 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }:
+  outputs = { self, nixpkgs, disko, home-manager, ... }:
     let
       system = "x86_64-linux";
     in
@@ -18,6 +21,8 @@
       nixosConfigurations.laptop = nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
+          disko.nixosModules.disko
+          ./hosts/laptop/disk-config.nix
           ./modules/common.nix
           ./hosts/laptop/default.nix
           ./hosts/laptop/hardware-configuration.nix

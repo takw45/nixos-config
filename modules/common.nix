@@ -74,6 +74,7 @@
       hackgen-nf-font
     ];
   };
+  fonts.fontconfig.enable = true;
 
   # sudo（wheelはNOPASSWD）
   security.sudo = {
@@ -140,5 +141,5 @@
   programs.virt-manager.enable = true;
 
   # NixOSの互換性バージョン（インストール時に合わせる）
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.11";
 }

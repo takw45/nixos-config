@@ -143,7 +143,11 @@ in
   home.file.".config/starship.toml".source = ../assets/starship.toml;
   home.file.".config/midnight-cat/dircolors".source = ../assets/dircolors;
   home.file.".gitconfig".source = ../assets/gitconfig;
+<<<<<<< HEAD
   home.file.".config/wezterm/wezterm.lua".source = ../assets/wezterm.lua;
+=======
+  home.file.".config/wezterm/wezterm.lua".source = ../assets/wezterm.lua
+>>>>>>> 378bcf9 (change system.stateVersion to 25.11)
 
   programs.git = {
     enable = true;
@@ -156,7 +160,6 @@ in
       core.editor = "code --wait";
       init.defaultBranch = "main";
       pull.rebase = false;
-      push.autoSetupRemote = true;
     };
   };
 
@@ -200,5 +203,9 @@ in
 
 
   # home-manager の世代管理用
-  home.stateVersion = "24.11";
+  home.stateVersion = "25.11";
+
+  # Claude Code用の設定ディレクトリだけ先に作っておく
+  home.file.".claude/.keep".text = "";
+
 }

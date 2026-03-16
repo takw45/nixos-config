@@ -1,9 +1,34 @@
-{ config, pkgs, lib, ... }:
-
+{ config, pkgs, lib, inputs, ... }:
 {
   # Bootloader (systemd-boot)
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot = {
+    plymouth = {
+      enable = true;
+      theme = "rings";
+      themePackages = with pkgs; [
+        # By default we would install all themes
+        (adi1090x-plymouth-themes.override {
+          selected_themes = [ "rings" ];
+        })
+      ];
+    };
+
+    # Enable "Silent boot"
+    consoleLogLevel = 3;
+    initrd.verbose = false;
+    kernelParams = [
+      "quiet"
+      "udev.log_level=3"
+      "systemd.show_status=auto"
+    ];
+    # Hide the OS choice for bootloaders.
+    # It's still possible to open the bootloader list by pressing any key
+    # It will just not appear on screen unless a key is pressed
+    loader.timeout = 0;
+    loader.grub.devices = [ "/dev/nvme0n1p1" ];
+    loader.systemd-boot.enable = true;
+    loader.efi.canTouchEfiVariables = true;
+  };
 
   # Flakes / nix-command
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -107,6 +132,7 @@
   environment.systemPackages = with pkgs; [  
     wget
     git
+    gh
     direnv
     nix-direnv
     

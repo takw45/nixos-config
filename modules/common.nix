@@ -55,10 +55,13 @@
   networking.networkmanager.enable = true;
 
   # オーディオ（PipeWire）
+  security.rtkit.enable = true;
+
   services.pipewire = {
     enable = true;
     pulse.enable = true;
     alsa.enable = true;
+    alsa.support32Bit = true;
   };
 
   # COSMIC（Wayland）
@@ -129,6 +132,17 @@
   xdg.portal.enable = true;
   xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
+  # Game(Steam)
+  programs.steam.enable = true;
+  programs.gamemode.enable = true;
+
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
+
+  services.power-profiles-daemon.enable = true;
+
   environment.systemPackages = with pkgs; [  
     wget
     git
@@ -157,6 +171,12 @@
     android-studio
     android-tools
     vscode
+
+    # Games
+    mangohud
+    gamescope
+    protonup-qt
+    vulkan-tools
   ];
 
   nixpkgs.config = {

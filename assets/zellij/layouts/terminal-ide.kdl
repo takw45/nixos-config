@@ -1,0 +1,81 @@
+layout {
+  tab name="IDE" {
+    pane split_direction="vertical" {
+      pane size="20%" {
+        command "yazi"
+      }
+
+      pane size="55%" split_direction="horizontal" {
+        pane size="70%" {
+          command "nvim"
+          args "--listen" "/tmp/nvim.sock"
+        }
+        pane size="30%" {
+          command "zsh"
+          args "-lc" "clear; echo '[shell] examples:'; echo '  bun dev'; echo '  bun test'; echo '  lg'; echo '  ld'; echo '  dbui'; exec zsh -l"
+        }
+      }
+
+      pane size="25%" split_direction="horizontal" {
+        pane size="70%" {
+          command "zsh"
+          args "-lc" "if command -v claude >/dev/null 2>&1; then exec claude; else echo 'claude command not found'; echo 'Install Claude Code CLI and ensure PATH is set.'; exec zsh -l; fi"
+        }
+        pane size="30%" {
+          command "zsh"
+          args "-lc" "clear; echo '[logs helper]'; echo 'Examples:'; echo '  devlogs'; echo '  tail -f logs/app.log'; echo '  rg TODO .'; exec zsh -l"
+        }
+      }
+    }
+  }
+
+  tab name="Ops" {
+    pane split_direction="horizontal" {
+      pane split_direction="vertical" {
+        pane {
+          command "lazygit"
+        }
+        pane {
+          command "zsh"
+          args "-lc" "if command -v lazysql >/dev/null 2>&1; then exec lazysql; else exec zsh -l; fi"
+        }
+      }
+
+      pane split_direction="vertical" {
+        pane {
+          command "lazydocker"
+        }
+        pane {
+          command "zsh"
+          args "-lc" "clear; echo '[ops shell]'; echo 'Examples:'; echo '  docker ps'; echo '  docker compose ps'; echo '  psql'; exec zsh -l"
+        }
+      }
+    }
+  }
+
+  tab name="Server" {
+    pane split_direction="horizontal" {
+      pane split_direction="vertical" {
+        pane {
+          command "zsh"
+          args "-lc" "clear; echo '[server helper]'; echo 'Run your app here:'; echo '  bun dev'; exec zsh -l"
+        }
+        pane {
+          command "zsh"
+          args "-lc" "clear; echo '[search helper]'; echo 'Examples:'; echo '  rg createProject .'; echo '  fd service.ts'; exec zsh -l"
+        }
+      }
+
+      pane split_direction="vertical" {
+        pane {
+          command "zsh"
+          args "-lc" "clear; echo '[compose logs helper]'; echo '  devlogs'; echo '  docker compose logs -f api'; exec zsh -l"
+        }
+        pane {
+          command "zsh"
+          args "-lc" "clear; exec zsh -l"
+        }
+      }
+    }
+  }
+}

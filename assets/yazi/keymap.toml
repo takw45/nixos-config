@@ -1,0 +1,4 @@
+[[manager.prepend_keymap]]
+on = ["o"]
+run = "open"
+desc = "Open file in nvim"

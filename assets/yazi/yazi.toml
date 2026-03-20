@@ -1,0 +1,4 @@
+[opener]
+edit = [
+  { run = 'nvim --server /tmp/nvim.sock --remote "$@"', block = false }
+]

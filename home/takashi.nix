@@ -1,29 +1,40 @@
 { config, pkgs, lib, ... }:
-
-let
-  obsidianWrapped = pkgs.symlinkJoin {
-    name = "obsidian-wayland-wrapped";
-    paths = [ pkgs.obsidian ];
-    buildInputs = [ pkgs.makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/obsidian \
-        --add-flags "--enable-features=UseOzonePlatform,WaylandWindowDecorations" \
-        --add-flags "--ozone-platform=wayland"
-    '';
-  };
-in
 {
   home.username = "takashi";
   home.homeDirectory = "/home/takashi";
 
-  home.packages = [
-    obsidianWrapped
+  home.packages = with pkgs; [
+    obsidian
+    zellij
+    neovim
+    yazi
+    ripgrep
+    fd
+    fzf
+    bat
+    eza
+    zoxide
+    lazygit
+    lazydocker
+    lazysql
+    btop
+    jq
+    tree
+    wl-clipboard
+    xclip
+    docker-client
+    docker-compose
+    gitui
+    delta
   ];
 
   # 環境変数
   home.sessionVariables = {
     LSCOLORS = "exfxcxdxbxegedabagacad";
-    EDITOR = "code";
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+    PAGER = "bat";
+    TERMINAL = "wezterm";
     FZF_DEFAULT_OPTS = "--reverse --no-sort --no-hscroll --preview-window=down";
   };
 
@@ -57,8 +68,16 @@ in
       gc = "git commit";
       gco = "git checkout";
       gl = "git log --oneline --decorate --graph -n 30";
-      nr-laptop = "sudo nixos-rebuild switch --flake /etc/nixos#laptop";
-      nr-vm = "sudo nixos-rebuild switch --flake /etc/nixos#vm";
+      y = "yazi";
+      lg = "lazygit";
+      ld = "lazydocker";
+      lsql = "lazysql";
+      ide = "zellij --layout terminal-ide";
+      devlogs = "docker compose logs -f --tail=100";
+      dcu = "docker compose up -d";
+      dcd = "docker compose down";
+      dps = "docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'";
+      dbui = "lazysql";
     };
 
     setOptions = [
@@ -78,9 +97,6 @@ in
       bindkey -e
       bindkey '^[[1;5D' backward-word
       bindkey '^[[1;5C' forward-word
-
-      # Sheldon
-      eval "$(${pkgs.sheldon}/bin/sheldon source)"
 
       # fzf history
       function fzf-select-history() {
@@ -132,6 +148,19 @@ in
       }
       zle -N select-git-branch-friendly
       bindkey '^b' select-git-branch-friendly
+
+      # bat theme fallback
+      export BAT_THEME="TwoDark"
+
+      # yazi cwd sync helper
+      function yy() {
+        local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+        yazi "$@" --cwd-file="$tmp"
+        if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+          cd -- "$cwd"
+        fi
+        rm -f -- "$tmp"
+      }
     '';
   };
 
@@ -140,10 +169,27 @@ in
     enableZshIntegration = true;
   };
 
-  home.file.".config/starship.toml".source = ../assets/starship.toml;
-  home.file.".config/midnight-cat/dircolors".source = ../assets/dircolors;
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  programs.bat.enable = true;
+  programs.eza.enable = true;
+
   home.file.".gitconfig".source = ../assets/gitconfig;
-  home.file.".config/wezterm/wezterm.lua".source = ../assets/wezterm.lua;
+  xdg.configFile."starship.toml".source = ../assets/starship.toml;
+  xdg.configFile."midnight-cat/dircolors".source = ../assets/midnight-cat/dircolors;
+  xdg.configFile."wezterm/wezterm.lua".source = ../assets/wezterm/wezterm.lua;
+  xdg.configFile."zellij/config.kdl".source = ../assets/zellij/config.kdl;
+  xdg.configFile."zellij/layouts/terminal-ide.kdl".source = ../assets/zellij/layouts/terminal-ide.kdl;
+  xdg.configFile."yazi/yazi.toml".source = ../assets/yazi/yazi.toml;
+  xdg.configFile."yazi/keymap.toml".source = ../assets/yazi/keymap.toml;
 
   programs.git = {
     enable = true;
@@ -153,7 +199,7 @@ in
     };
 
     settings = {
-      core.editor = "code --wait";
+      core.editor = "nvim";
       init.defaultBranch = "main";
       pull.rebase = false;
     };
@@ -164,7 +210,6 @@ in
     enableZshIntegration = true;
     nix-direnv.enable = true;
   };
-
 
   # 壁紙設定
   home.file."Pictures/wallpaper.jpg".source = ../assets/wallpaper.jpg;

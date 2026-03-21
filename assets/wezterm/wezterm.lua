@@ -16,7 +16,7 @@ config.window_padding = {
   left = 6,
   right = 6,
   top = 6,
-  bottom = 6,
+  bottom = 45,
 }
 
 config.font = wezterm.font("Hackgen Console NF")

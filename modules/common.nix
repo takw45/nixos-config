@@ -183,7 +183,15 @@
     android_sdk.accept_license = true;
   };
 
-  virtualisation.libvirtd.enable = true;
+  virtualisation.libvirtd = {
+    enable = true;
+    # QEMU/KVMの最適化（ほぼ必須）
+    qemu = {
+      package = pkgs.qemu_kvm;
+      runAsRoot = false;
+    };
+  };
+
   programs.virt-manager.enable = true;
 
   # NixOSの互換性バージョン（インストール時に合わせる）

@@ -198,11 +198,25 @@
       email = "3017297+takw45@users.noreply.github.com";
     };
 
+    signing = {
+      signByDefault = true;
+      key = "~/.ssh/id_ed25519.pub";
+    };
+
     settings = {
-      core.editor = "nvim";
+      core.editor = "code --wait";
       init.defaultBranch = "main";
       pull.rebase = false;
+
+      gpg = {
+        format = "ssh";
+      };
+
+      github = {
+        user = "takw45";
+      };
     };
+
   };
 
   programs.direnv = {

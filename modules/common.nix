@@ -28,6 +28,8 @@
     loader.grub.devices = [ "/dev/nvme0n1p1" ];
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
+
+    initrd.systemd.enable = true;
   };
 
   # Flakes / nix-command
@@ -50,6 +52,11 @@
     LC_TELEPHONE = "ja_JP.UTF-8";
     LC_TIME = "ja_JP.UTF-8";
   };
+
+  systemd.sleep.extraConfig = ''
+    AllowSuspendThenHibernate=yes
+    HibernateDelaySec=30min
+  '';
 
   # ネットワーク
   networking.networkmanager.enable = true;

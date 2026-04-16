@@ -4,13 +4,13 @@
   boot = {
     plymouth = {
       enable = true;
-      theme = "rings";
-      themePackages = with pkgs; [
-        # By default we would install all themes
-        (adi1090x-plymouth-themes.override {
-          selected_themes = [ "rings" ];
-        })
-      ];
+      theme = "spinner";
+      # themePackages = with pkgs; [
+      #   # By default we would install all themes
+      #   (adi1090x-plymouth-themes.override {
+      #     selected_themes = [ "spinner" ];
+      #   })
+      # ];
     };
 
     # Enable "Silent boot"
@@ -167,7 +167,6 @@
     papirus-icon-theme
     fluent-icon-theme
     
-
     # setting tools
     glib
     gsettings-desktop-schemas

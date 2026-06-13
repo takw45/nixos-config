@@ -18,6 +18,17 @@
       system = "x86_64-linux";
     in
     {
+      nixosConfigurations.laptop-installer = nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          disko.nixosModules.disko
+          ./hosts/laptop/disk-config.nix
+          ./modules/common.nix
+          ./hosts/laptop/hardware-configuration.nix
+          ./hosts/laptop/installer.nix
+        ];
+      };
+
       nixosConfigurations.laptop = nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [

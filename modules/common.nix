@@ -72,8 +72,15 @@
   };
 
   # COSMIC（Wayland）
-  services.displayManager.cosmic-greeter.enable = true;
   services.desktopManager.cosmic.enable = true;
+
+  services.displayManager.sddm = {
+    enable = true;
+    wayland.enable = true; # SDDM自体もWaylandで動かす場合
+  };
+
+  # 念のためCOSMIC純正ログイン画面は無効
+  services.displayManager.cosmic-greeter.enable = false;
 
   environment.cosmic.excludePackages = with pkgs; [
     cosmic-edit

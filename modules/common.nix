@@ -53,11 +53,6 @@
     LC_TIME = "ja_JP.UTF-8";
   };
 
-  systemd.sleep.extraConfig = ''
-    AllowSuspendThenHibernate=yes
-    HibernateDelaySec=30min
-  '';
-
   # ネットワーク
   networking.networkmanager.enable = true;
 

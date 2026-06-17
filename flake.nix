@@ -35,6 +35,7 @@
           disko.nixosModules.disko
           ./hosts/laptop/disk-config.nix
           ./modules/common.nix
+          ./modules/workstation.nix
           ./hosts/laptop/default.nix
           ./hosts/laptop/hardware-configuration.nix
 
@@ -51,6 +52,7 @@
         inherit system;
         modules = [
           ./modules/common.nix
+          ./modules/workstation.nix
           ./hosts/vm/default.nix
           ./hosts/vm/hardware-configuration.nix
 

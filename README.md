@@ -20,7 +20,7 @@
 ```shell
 sudo nix --extra-experimental-features "nix-command flakes" \
   run github:nix-community/disko/latest#disko-install -- \
-  --flake .#laptop \
+  --flake .#laptop-installer \
   --disk main /dev/nvme0n1
 ```
 途中でディスク暗号化用のパスワード入力が求められるのでパスワードを入力する.
@@ -28,8 +28,14 @@ sudo nix --extra-experimental-features "nix-command flakes" \
 ### OSインストール
 
 ```shell
-sudo nixos-install --flake .#laptop
+sudo nixos-install --flake .#laptop-installer
 ```
+通常起動後に `laptop` へ切り替える.
+
+```shell
+sudo nixos-rebuild switch --flake .#laptop
+```
+
 こちらも途中でroot用のパスワード入力が求められるのでパスワードを入力.
 
 インストールが完了したら`reboot`する

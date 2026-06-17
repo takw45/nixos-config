@@ -1,10 +1,6 @@
 { pkgs, ... }:
 
 {
-  services.xserver.enable = false;
-  services.desktopManager.cosmic.enable = false;
-  services.displayManager.sddm.enable = false;
-
   networking.networkmanager.enable = true;
 
   environment.systemPackages = with pkgs; [

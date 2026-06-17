@@ -9,8 +9,6 @@
   services.blueman.enable = true;
 
   # 電源管理
-  services.power-profiles-daemon.enable = true;
-
   systemd.services.battery-limit = {
     description = "Battery Charge Limit";
     wantedBy = [ "multi-user.target" ];
@@ -20,6 +18,11 @@
       echo 95 > /sys/class/power_supply/BAT0/charge_control_end_threshold
     '';
   };
+
+  services.udev.extraHwdb = ''
+    evdev:input:*
+      KEYBOARD_KEY_3a=leftctrl
+  '';
 
   services.logind.settings.Login = {
     HandleLidSwitch="suspend";

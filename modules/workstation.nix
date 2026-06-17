@@ -12,7 +12,15 @@
   };
 
   services.desktopManager.cosmic.enable = true;
-  services.displayManager.cosmic-greeter.enable = false;
+  services.desktopManager.plasma6.enable = true;
+
+  services.displayManager = {
+    cosmic-greeter.enable = false;
+    sddm = {
+      enable = true;
+      theme = "breeze";
+    };
+  };
 
   environment.cosmic.excludePackages = with pkgs; [
     cosmic-edit

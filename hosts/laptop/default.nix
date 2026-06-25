@@ -34,6 +34,8 @@
   # 例：タッチパッドなど追加で調整したくなったらここに置く
   services.libinput.enable = true;
 
+  services.power-profiles-daemon.enable = true;
+
   # 例：AMD GPU向けは通常自動。必要になったらここに追加。
   # services.xserver.videoDrivers = [ "amdgpu" ];
 

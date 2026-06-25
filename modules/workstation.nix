@@ -87,8 +87,6 @@
     enable32Bit = true;
   };
 
-  services.power-profiles-daemon.enable = true;
-
   environment.systemPackages = with pkgs; [
     wget
     git

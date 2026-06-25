@@ -258,7 +258,7 @@
 
 
   # home-manager の世代管理用
-  home.stateVersion = "25.11";
+  home.stateVersion = "26.05";
 
   # Claude Code用の設定ディレクトリだけ先に作っておく
   home.file.".claude/.keep".text = "";

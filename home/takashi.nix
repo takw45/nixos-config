@@ -216,7 +216,10 @@
         user = "takw45";
       };
     };
-
+    extraConfig = {
+      credential."https://github.com".helper = "!${pkgs.gh}/bin/gh auth git-credential";
+      credential."https://gist.github.com".helper = "!${pkgs.gh}/bin/gh auth git-credential";
+    };
   };
 
   programs.direnv = {
@@ -263,4 +266,13 @@
   # Claude Code用の設定ディレクトリだけ先に作っておく
   home.file.".claude/.keep".text = "";
 
+  home.activation.ensureGithubSshKeys = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    for purpose in auth signing; do
+      keyfile="$HOME/.ssh/id_github_$purpose"
+      if [ ! -f "$keyfile" ]; then
+        $DRY_RUN_CMD ${pkgs.openssh}/bin/ssh-keygen -t ed25519 \
+          -C "takashi-$purpose" -f "$keyfile" -N "" $VERBOSE_ARG
+      fi
+    done
+  '';
 }

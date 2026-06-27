@@ -19,9 +19,9 @@
     # It's still possible to open the bootloader list by pressing any key
     # It will just not appear on screen unless a key is pressed
     loader.timeout = 0;
-    loader.grub.devices = [ "/dev/nvme0n1p1" ];
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
+    loader.efi.efiSysMountPoint = "/boot"; 
 
     initrd.systemd.enable = true;
   };
